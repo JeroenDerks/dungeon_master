@@ -1,40 +1,73 @@
-import axios from "axios";
+import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import * as THREE from "three";
 
 import { Container, Button, Form } from "./styled";
 import { blendShapeToAnimation } from "../../utils/blendShapeToAnimation";
-import type { FormProps } from "./types";
 import { BlendData } from "../../utils/types";
 import { mixer } from "../../utils/threeConfig";
+import { azureVisemeKeys } from "../../utils/azureVisemes";
+
+import type { FormProps } from "./types";
 
 export const Input = () => {
   const handleSubmit = async (e: React.FormEvent<FormProps>) => {
     e.preventDefault();
 
-    const req = await axios.post("/api/textToSpeech", {
-      headers: { "Content-Type": "application/json" },
-      userInput: e.currentTarget.textArea.value,
-    });
+    const speechConfig = sdk.SpeechConfig.fromSubscription(
+      "d61baa9736ca414ca9eeaa420c8dc176",
+      "westeurope"
+    );
+    const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
 
-    if (req.status === 200) {
-      const blendData: BlendData = req.data.blendData;
-      console.log(req.data);
-      const clip = blendShapeToAnimation(blendData);
+    const speechSynthesizer = new sdk.SpeechSynthesizer(
+      speechConfig,
+      audioConfig
+    );
 
-      console.log("clip", clip);
-      const audio = new Audio(
-        req.data.rawData.replace("data:;", "data:audio/mpeg;")
-      );
-      audio.load();
-      audio.play();
+    const ssml = `
+    <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-US">
+      <voice name="en-US-DavisNeural" style='whispering'>
+        <mstts:viseme type="FacialExpression"/>
+          ${e.currentTarget.textArea.value}
+      </voice>
+    </speak>`;
 
-      let animation = mixer.clipAction(clip);
-      animation.setLoop(THREE.LoopOnce);
-      animation.clampWhenFinished = true;
-      animation.enable = true;
+    speechSynthesizer.speakSsmlAsync(
+      ssml,
+      (result) => {
+        if (result) {
+          speechSynthesizer.close();
+        }
+      },
+      (err) => {
+        speechSynthesizer.close();
+      }
+    );
 
-      animation.reset().play();
-    }
+    let blendData: BlendData = [];
+    let timeStep = 1 / 60;
+    let timeStamp = 0;
+    speechSynthesizer.visemeReceived = function (s, e) {
+      var animation = JSON.parse(e.animation);
+
+      animation.BlendShapes.forEach((blendArray: Array<number>) => {
+        let blend: any = {};
+        azureVisemeKeys.forEach((shapeName, i) => {
+          blend[shapeName] = blendArray[i];
+        });
+
+        blendData.push({ timeStamp, blendShapes: blend });
+        timeStamp += timeStep;
+
+        const clip = blendShapeToAnimation(blendData);
+        let animation = mixer.clipAction(clip);
+        animation.setLoop(THREE.LoopOnce);
+        animation.clampWhenFinished = true;
+        animation.enable = true;
+
+        animation.reset().play();
+      });
+    };
   };
 
   return (

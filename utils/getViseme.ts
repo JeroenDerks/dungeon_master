@@ -17,7 +17,7 @@ export const getViseme = async ({
 }: {
   userInput: string;
 }): Promise<
-  { blendData: BlendData; filename?: string; rawData: string } | false
+  { blendData: BlendData; filename?: string; rawData: ArrayBuffer } | false
 > => {
   if (!key || !region) {
     return false;
@@ -35,9 +35,8 @@ export const getViseme = async ({
     let blendData: BlendData = [];
 
     synthesizer.synthesisCompleted = (s, e) => {
-      let rawData = URL.createObjectURL(new Blob([e.result.audioData]));
-
-      resolve({ blendData, rawData });
+      console.log(e.result.audioData);
+      resolve({ blendData, rawData: e.result.audioData });
     };
 
     synthesizer.visemeReceived = function (s, e) {
