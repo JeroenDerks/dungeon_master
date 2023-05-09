@@ -20,11 +20,14 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "styled-components": "^5.3.10",
-    "three": "^0.152.2",
+    "three-addons": "^1.2.0",
     "typescript": "5.0.4"
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.26",
-    "@types/three": "^0.152.0"
+    "@types/three": "^0.152.0",
+    "@wildpeaks/three-webpack-plugin": "^2.0.0",
+    "next-transpile-modules": "^10.0.0",
+    "three": "^0.152.2"
   }
 }

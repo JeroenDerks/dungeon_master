@@ -2,21 +2,21 @@
 
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
-import Image from "next/image";
-import styles from "./page.module.css";
-import axios from "axios";
-
+// @ts-ignore
 import Stats from "three/addons/libs/stats.module.js";
-
+// @ts-ignore
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
+// @ts-ignore
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+// @ts-ignore
 import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
+// @ts-ignore
 import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
-
+// @ts-ignore
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-
+// @ts-ignore
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+
 import { Input } from "../../components/Input";
 
 let defaultAnimation;
