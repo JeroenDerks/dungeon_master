@@ -1,7 +1,11 @@
 import axios from "axios";
+import * as THREE from "three";
 
 import { Container, Button, Form } from "./styled";
+import { blendShapeToAnimation } from "../../utils/blendShapeToAnimation";
 import type { FormProps } from "./types";
+import { BlendData } from "../../utils/types";
+import { mixer } from "@/app/page";
 
 export const Input = () => {
   const handleSubmit = async (e: React.FormEvent<FormProps>) => {
@@ -12,14 +16,23 @@ export const Input = () => {
       userInput: e.currentTarget.textArea.value,
     });
 
-    console.log(req);
-
     if (req.status === 200) {
+      const blendData: BlendData = req.data.blendData;
       console.log(req.data);
+      const clip = blendShapeToAnimation(blendData);
 
-      const audio = new Audio("/" + req.data.filename);
+      const audio = new Audio(
+        req.data.rawData.replace("data:;", "data:audio/mpeg;")
+      );
       audio.load();
       audio.play();
+
+      let animation = mixer.clipAction(clip);
+      animation.setLoop(THREE.LoopOnce);
+      animation.clampWhenFinished = true;
+      animation.enable = true;
+
+      animation.reset().play();
     }
   };
 

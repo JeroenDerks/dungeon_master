@@ -1,5 +1,6 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-import { uploadToStorage } from "./uploadToStorage";
+import { azureVisemeKeys } from "./azureVisemes";
+import { BlendData } from "./types";
 
 let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-US">
 <voice name="en-US-DavisNeural" style='whispering'>
@@ -15,7 +16,9 @@ export const getViseme = async ({
   userInput,
 }: {
   userInput: string;
-}): Promise<{ blendData: Array<number>; filename: string } | false> => {
+}): Promise<
+  { blendData: BlendData; filename?: string; rawData: string } | false
+> => {
   if (!key || !region) {
     return false;
   }
@@ -26,44 +29,35 @@ export const getViseme = async ({
     speechConfig.speechSynthesisOutputFormat = 5; // mp3
 
     const randomString = Math.random().toString(36).slice(2, 7);
-    const filename = `./audio/speech-${randomString}.mp3`;
+    const filename = `./public/audio/speech-${randomString}.mp3`;
     const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filename);
 
     let timeStep = 1 / 60;
     let timeStamp = 0;
+    let rawData: string = "";
 
     let synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-    let buffers: ArrayBuffer[] = [];
-    let blendData: Array<number> = [];
+    let blendData: BlendData = [];
+
+    synthesizer.synthesisCompleted = (s, e) => {
+      let rawData = URL.createObjectURL(new Blob([e.result.audioData]));
+
+      resolve({ blendData, rawData });
+    };
 
     synthesizer.visemeReceived = function (s, e) {
       var animation = JSON.parse(e.animation);
 
-      blendData = animation.BlendShapes.map((blendShapes: Array<number>) => {
-        const data = { timeStamp, blendShapes };
-        timeStamp += timeStep;
-        return data;
-      });
+      animation.BlendShapes.forEach((blendArray: Array<number>) => {
+        let blend: any = {};
+        azureVisemeKeys.forEach((shapeName, i) => {
+          blend[shapeName] = blendArray[i];
+        });
 
-      resolve({
-        blendData,
-        filename: `audio/speech-${randomString}.mp3`,
+        blendData.push({ timeStamp, blendShapes: blend });
+        timeStamp += timeStep;
       });
     };
     synthesizer.speakSsmlAsync(ssml);
-
-    // synthesizer.synthesisCompleted = (s, e) => {
-    //   console.log("completed");
-    //   console.log(e.result.audioData);
-    //   if (e.result.audioData) {
-    //     // each newData is a playable audio sample, with appropriate headers (in the case of .wav and .ogg files) added.
-
-    //     resolve({
-    //       blendData,
-    //       filename: `audio/speech-${randomString}.mp3`,
-    //       rawData: e.result.audioData,
-    //     });
-    //   }
-    // };
   });
 };
