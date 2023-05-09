@@ -1,20 +1,21 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
-import { Input } from "../../components/Input";
+import React, { useEffect } from "react";
+import { InputController } from "../../components/InputController";
+import { PageContainer } from "../../components/PageContainer";
 import { initThree } from "../../utils/threeConfig";
 
 export default function Home() {
-  const ref = useRef(null);
-
   useEffect(() => {
     initThree();
   }, []);
 
   return (
     <main>
-      <div ref={ref}></div>
-      <Input />
+      <PageContainer>
+        <div id="skecth-container" />
+        <InputController />
+      </PageContainer>
     </main>
   );
 }

@@ -1,9 +1,6 @@
-"use client";
-
-import { useRef, useEffect } from "react";
 import * as THREE from "three";
 // @ts-ignore
-import Stats from "three/addons/libs/stats.module.js";
+// import Stats from "three/addons/libs/stats.module.js";
 // @ts-ignore
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 // @ts-ignore
@@ -16,6 +13,7 @@ import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 // @ts-ignore
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+import { CONTROL_PANEL_HEIGHT, PAGE_PADDING } from "./constants";
 
 export let mixer: any;
 
@@ -29,8 +27,8 @@ export function initThree() {
   );
   let zeroClip = new THREE.AnimationClip("blink", -1, [zeroTrack]);
 
-  const container = document.createElement("div");
-  document.body.appendChild(container);
+  const container = document.getElementById("skecth-container");
+  // document.body.appendChild(container);
 
   const camera = new THREE.PerspectiveCamera(
     45,
@@ -38,17 +36,24 @@ export function initThree() {
     1,
     20
   );
-  camera.position.set(-0.2, -3, 1);
+  camera.position.set(-0.1, -1, 3);
 
   const scene = new THREE.Scene();
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(
+    window.innerWidth - PAGE_PADDING * 2,
+    window.innerHeight - PAGE_PADDING - 136
+  );
 
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
-  container.appendChild(renderer.domElement);
+  container?.appendChild(renderer.domElement);
+
+  const light = new THREE.PointLight(0xff0000, 5, 10);
+  light.position.set(0, -3, 4);
+  scene.add(light);
 
   const ktx2Loader = new KTX2Loader()
     .setTranscoderPath("/textures/basis/")
@@ -86,7 +91,7 @@ export function initThree() {
   const environment = new RoomEnvironment();
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
 
-  scene.background = new THREE.Color(0x666666);
+  scene.background = new THREE.Color(0x222222);
   scene.environment = pmremGenerator.fromScene(environment).texture;
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -96,7 +101,7 @@ export function initThree() {
   controls.minAzimuthAngle = -Math.PI / 2;
   controls.maxAzimuthAngle = Math.PI / 2;
   controls.maxPolarAngle = Math.PI / 1.8;
-  controls.target.set(0, 0.15, -0.2);
+  // controls.target.set(0, 0.15, -0.2);
 
   // const stats = new Stats();
   // container.appendChild(stats.dom);

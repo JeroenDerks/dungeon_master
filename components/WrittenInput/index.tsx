@@ -1,15 +1,16 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import * as THREE from "three";
 
-import { Container, Button, Form } from "./styled";
+import { Container, Form, TextArea } from "./styled";
 import { blendShapeToAnimation } from "../../utils/blendShapeToAnimation";
 import { BlendData } from "../../utils/types";
 import { mixer } from "../../utils/threeConfig";
 import { azureVisemeKeys } from "../../utils/azureVisemes";
+import { Button } from "../Button";
 
 import type { FormProps } from "./types";
 
-export const Input = () => {
+export const WrittenInput = () => {
   const handleSubmit = async (e: React.FormEvent<FormProps>) => {
     e.preventDefault();
 
@@ -76,7 +77,11 @@ export const Input = () => {
         <label htmlFor="textArea" hidden>
           Input field
         </label>
-        <textarea name="Text1" cols={40} rows={5} id="textArea"></textarea>
+        <TextArea
+          name="Text1"
+          id="textArea"
+          placeholder="Type your text"
+        ></TextArea>
         <Button type="submit">Submit</Button>
       </Form>
     </Container>
