@@ -1,4 +1,6 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
+import { azureVisemeKeys } from "./azureVisemes";
+import { BlendData } from "./types";
 
 let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-US">
 <voice name="en-US-DavisNeural" style='whispering'>
@@ -15,7 +17,7 @@ export const getViseme = async ({
 }: {
   userInput: string;
 }): Promise<
-  { blendData: Array<number>; filename?: string; rawData: string } | false
+  { blendData: BlendData; filename?: string; rawData: string } | false
 > => {
   if (!key || !region) {
     return false;
@@ -32,30 +34,30 @@ export const getViseme = async ({
 
     let timeStep = 1 / 60;
     let timeStamp = 0;
+    let rawData: string = "";
 
     let synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-    let blendData: Array<number> = [];
+    let blendData: BlendData = [];
+
+    synthesizer.synthesisCompleted = (s, e) => {
+      let rawData = URL.createObjectURL(new Blob([e.result.audioData]));
+
+      resolve({ blendData, rawData });
+    };
 
     synthesizer.visemeReceived = function (s, e) {
       var animation = JSON.parse(e.animation);
 
-      blendData = animation.BlendShapes.map((blendShapes: Array<number>) => {
-        const data = { timeStamp, blendShapes };
+      animation.BlendShapes.forEach((blendArray: Array<number>) => {
+        let blend: any = {};
+        azureVisemeKeys.forEach((shapeName, i) => {
+          blend[shapeName] = blendArray[i];
+        });
+
+        blendData.push({ timeStamp, blendShapes: blend });
         timeStamp += timeStep;
-        return data;
       });
     };
     synthesizer.speakSsmlAsync(ssml);
-
-    synthesizer.synthesisCompleted = (s, e) => {
-      const url = URL.createObjectURL(new Blob([e.result.audioData]));
-
-      if (e.result.audioData) {
-        resolve({
-          blendData,
-          rawData: url,
-        });
-      }
-    };
   });
 };

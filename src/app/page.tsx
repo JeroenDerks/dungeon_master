@@ -20,7 +20,7 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { Input } from "../../components/Input";
 
 let defaultAnimation;
-let mixer: any;
+export let mixer: any;
 
 export default function Home() {
   const ref = useRef(null);
