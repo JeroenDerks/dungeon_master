@@ -105,9 +105,6 @@ export default function Home() {
     controls.maxPolarAngle = Math.PI / 1.8;
     controls.target.set(0, 0.15, -0.2);
 
-    const stats = new Stats();
-    container.appendChild(stats.dom);
-
     renderer.setAnimationLoop(() => {
       const delta = clock.getDelta();
       if (mixer) {
@@ -117,8 +114,6 @@ export default function Home() {
       renderer.render(scene, camera);
 
       controls.update();
-
-      stats.update();
     });
   }, []);
 

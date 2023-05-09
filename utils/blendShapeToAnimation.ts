@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { facecapModel } from "./mapVertices";
-import { mixer } from "@/app/page";
 import type { BlendData } from "./types";
 
 export const blendShapeToAnimation = (blendData: BlendData) => {
@@ -34,12 +33,5 @@ export const blendShapeToAnimation = (blendData: BlendData) => {
     values
   );
 
-  const customClip = new THREE.AnimationClip("audioclip", -1, [customTrack]);
-
-  let animation = mixer.clipAction(customClip);
-  animation.setLoop(THREE.LoopOnce);
-  animation.clampWhenFinished = true;
-  animation.enable = true;
-
-  animation.reset().play();
+  return new THREE.AnimationClip("audioclip", -1, [customTrack]);
 };
