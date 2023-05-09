@@ -52,18 +52,18 @@ export const getViseme = async ({
     };
     synthesizer.speakSsmlAsync(ssml);
 
-    synthesizer.synthesisCompleted = (s, e) => {
-      console.log("completed");
-      console.log(e.result.audioData);
-      if (e.result.audioData) {
-        // each newData is a playable audio sample, with appropriate headers (in the case of .wav and .ogg files) added.
+    // synthesizer.synthesisCompleted = (s, e) => {
+    //   console.log("completed");
+    //   console.log(e.result.audioData);
+    //   if (e.result.audioData) {
+    //     // each newData is a playable audio sample, with appropriate headers (in the case of .wav and .ogg files) added.
 
-        resolve({
-          blendData,
-          filename: `audio/speech-${randomString}.mp3`,
-          rawData: e.result.audioData,
-        });
-      }
-    };
+    //     resolve({
+    //       blendData,
+    //       filename: `audio/speech-${randomString}.mp3`,
+    //       rawData: e.result.audioData,
+    //     });
+    //   }
+    // };
   });
 };
