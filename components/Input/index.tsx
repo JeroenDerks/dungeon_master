@@ -15,11 +15,11 @@ export const Input = () => {
     if (req.status === 200) {
       console.log(req.data.rawData);
 
-      const audio = new Audio(
-        req.data.rawData.replace("data:;", "data:audio/mpeg;")
-      );
-      audio.load();
-      audio.play();
+      // const audio = new Audio(
+      //   req.data.rawData.replace("data:;", "data:audio/mpeg;")
+      // );
+      // audio.load();
+      // audio.play();
     }
   };
 
