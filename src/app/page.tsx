@@ -121,7 +121,7 @@ export default function Home() {
     });
   }, [animation]);
 
-  const updateAnimation = (_animation) => {
+  const updateAnimation = (_animation: any) => {
     if (animation) {
       let clipAction = mixer.clipAction(_animation);
       clipAction.setLoop(THREE.LoopOnce);
