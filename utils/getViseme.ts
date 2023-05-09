@@ -1,5 +1,4 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-import { uploadToStorage } from "./uploadToStorage";
 
 let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-US">
 <voice name="en-US-DavisNeural" style='whispering'>
@@ -15,7 +14,9 @@ export const getViseme = async ({
   userInput,
 }: {
   userInput: string;
-}): Promise<{ blendData: Array<number>; filename: string } | false> => {
+}): Promise<
+  { blendData: Array<number>; filename?: string; rawData: string } | false
+> => {
   if (!key || !region) {
     return false;
   }
@@ -26,14 +27,13 @@ export const getViseme = async ({
     speechConfig.speechSynthesisOutputFormat = 5; // mp3
 
     const randomString = Math.random().toString(36).slice(2, 7);
-    const filename = `./audio/speech-${randomString}.mp3`;
+    const filename = `./public/audio/speech-${randomString}.mp3`;
     const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filename);
 
     let timeStep = 1 / 60;
     let timeStamp = 0;
 
     let synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-    let buffers: ArrayBuffer[] = [];
     let blendData: Array<number> = [];
 
     synthesizer.visemeReceived = function (s, e) {
@@ -44,26 +44,18 @@ export const getViseme = async ({
         timeStamp += timeStep;
         return data;
       });
-
-      resolve({
-        blendData,
-        filename: `audio/speech-${randomString}.mp3`,
-      });
     };
     synthesizer.speakSsmlAsync(ssml);
 
-    // synthesizer.synthesisCompleted = (s, e) => {
-    //   console.log("completed");
-    //   console.log(e.result.audioData);
-    //   if (e.result.audioData) {
-    //     // each newData is a playable audio sample, with appropriate headers (in the case of .wav and .ogg files) added.
+    synthesizer.synthesisCompleted = (s, e) => {
+      const url = URL.createObjectURL(new Blob([e.result.audioData]));
 
-    //     resolve({
-    //       blendData,
-    //       filename: `audio/speech-${randomString}.mp3`,
-    //       rawData: e.result.audioData,
-    //     });
-    //   }
-    // };
+      if (e.result.audioData) {
+        resolve({
+          blendData,
+          rawData: url,
+        });
+      }
+    };
   });
 };
