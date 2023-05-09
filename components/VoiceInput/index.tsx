@@ -1,24 +1,22 @@
 import React from "react";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 
-import { Container, Wrapper } from "./styled";
+import { Container, Copy, Wrapper } from "./styled";
 import { Button } from "../Button";
 
 export const VoiceInput = () => {
-  const [text, setText] = React.useState("speak into your microphone...");
+  const [text, setText] = React.useState(
+    "Enable your microphone and start talking"
+  );
+  const [micEnabled, setMicEnabled] = React.useState(false);
 
-  const sttFromMic = async () => {
-    if (
-      !process.env.NEXT_PUBLIC_AZURE_KEY ||
-      !process.env.NEXT_PUBLIC_AZURE_REGION
-    ) {
-      return;
-    }
+  const key = process.env.NEXT_PUBLIC_AZURE_KEY;
+  const region = process.env.NEXT_PUBLIC_AZURE_REGION;
 
-    const speechConfig = sdk.SpeechConfig.fromSubscription(
-      process.env.NEXT_PUBLIC_AZURE_KEY,
-      process.env.NEXT_PUBLIC_AZURE_REGION
-    );
+  if (!key || !region) {
+    setText("Oops, there was an error from our side");
+  } else {
+    const speechConfig = sdk.SpeechConfig.fromSubscription(key, region);
     speechConfig.speechRecognitionLanguage = "en-US";
 
     const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
@@ -51,7 +49,6 @@ export const VoiceInput = () => {
         );
         setText("Please talk into the mic");
       }
-
       speechRecognizer.stopContinuousRecognitionAsync();
     };
 
@@ -59,16 +56,16 @@ export const VoiceInput = () => {
       console.log("\n    Session stopped event.");
       speechRecognizer.stopContinuousRecognitionAsync();
     };
-
-    speechRecognizer.startContinuousRecognitionAsync();
-  };
+  }
 
   return (
     <Wrapper>
       <Container>
-        <p>{text}</p>
+        <Copy>{text}</Copy>
       </Container>
-      <Button onClick={sttFromMic}>Enable mic</Button>
+      <Button onClick={() => setMicEnabled(true)}>
+        {micEnabled ? "Mic is on" : "Enable mic"}
+      </Button>
     </Wrapper>
   );
 };

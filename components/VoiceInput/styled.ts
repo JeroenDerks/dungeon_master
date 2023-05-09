@@ -8,10 +8,17 @@ export const Container = styled.div`
   border-radius: 0px;
   caret-color: white;
   padding: 8px;
+  display: flex;
+  align-items: center;
 `;
 
 export const Wrapper = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
+`;
+
+export const Copy = styled.p`
+  font-size: 14px;
+  color: lightgrey;
 `;

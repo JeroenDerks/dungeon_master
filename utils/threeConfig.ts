@@ -36,7 +36,7 @@ export function initThree() {
     1,
     20
   );
-  camera.position.set(-0.1, -1, 3);
+  camera.position.set(-1, 1, 2.5);
 
   const scene = new THREE.Scene();
 

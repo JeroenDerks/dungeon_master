@@ -87,7 +87,7 @@ export const WrittenInput = () => {
         <TextArea
           name="Text1"
           id="textArea"
-          placeholder="Type your text"
+          placeholder="Type your text and the model will repeat it"
         ></TextArea>
         <Button type="submit">Submit</Button>
       </Form>

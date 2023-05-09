@@ -21,4 +21,9 @@ export const TextArea = styled.input`
   background-color: #000;
 
   outline: none;
+
+  ::placeholder {
+    font-size: 14px;
+    color: lightgrey;
+  }
 `;
