@@ -13,7 +13,7 @@ import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 // @ts-ignore
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-import { CONTROL_PANEL_HEIGHT, PAGE_PADDING } from "./constants";
+import { PAGE_PADDING } from "./constants";
 
 export let mixer: any;
 

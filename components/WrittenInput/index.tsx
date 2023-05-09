@@ -14,9 +14,16 @@ export const WrittenInput = () => {
   const handleSubmit = async (e: React.FormEvent<FormProps>) => {
     e.preventDefault();
 
+    if (
+      !process.env.NEXT_PUBLIC_AZURE_KEY ||
+      !process.env.NEXT_PUBLIC_AZURE_REGION
+    ) {
+      return;
+    }
+
     const speechConfig = sdk.SpeechConfig.fromSubscription(
-      "d61baa9736ca414ca9eeaa420c8dc176",
-      "westeurope"
+      process.env.NEXT_PUBLIC_AZURE_KEY,
+      process.env.NEXT_PUBLIC_AZURE_REGION
     );
     const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
 
