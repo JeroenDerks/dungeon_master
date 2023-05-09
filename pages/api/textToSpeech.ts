@@ -14,12 +14,12 @@ export default async function handler(
     console.log(userInput);
     const viseme = await getViseme({ userInput });
 
-    const dir = path.resolve("./public/audio");
+    const dir = path.resolve("./audio");
     console.log(dir);
     const filenames = fs.readdirSync(dir);
     console.log(filenames);
 
-    res.status(200).json({ ...viseme!, dir, filenames });
+    res.status(200).json({ ...viseme, dir });
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }

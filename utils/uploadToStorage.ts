@@ -4,22 +4,15 @@ import path from "path";
 import fs from "fs";
 const storageString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
-export const uploadToStorage = async (
-  randomString: string,
-  audioConfig: sdk.AudioConfig
-) => {
+export const uploadToStorage = async (randomString: string, blob: Blob) => {
   try {
     const dirRelativeToPublicFolder = "audio";
     const dir = path.resolve("public", dirRelativeToPublicFolder);
     const filenames = fs.readdirSync(dir);
 
-    console.log(filenames);
-
     // const file = filenames.find((name) => name.includes(randomString));
 
-    var file = fs.createWriteStream(dir + `/speech-${randomString}.mp3`);
-
-    console.log(file);
+    var file = blob;
 
     if (!file) return [];
     const containerName = `audio`;
@@ -37,12 +30,13 @@ export const uploadToStorage = async (
     );
 
     // set mimetype as determined from browser with file upload control
-    const options = { blobHTTPHeaders: { blobContentType: "audio/ogg" } };
+    const options = { blobHTTPHeaders: { blobContentType: "audio/mp3" } };
 
     // // upload file
-    // await blobClient.uploadData(file, options);
+    await blobClient.uploadData(blob, options);
 
     // await createBlobInContainer(`/audio/speech-${randomString}.mp3`);
+    return true;
   } catch (err) {
     console.log(err);
   }
