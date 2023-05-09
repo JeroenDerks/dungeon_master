@@ -11,7 +11,11 @@ let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml
 const key = process.env.AZURE_KEY;
 const region = process.env.AZURE_REGION;
 
-export const getViseme = async ({ userInput }: { userInput: string }) => {
+export const getViseme = async ({
+  userInput,
+}: {
+  userInput: string;
+}): Promise<{ blendData: Array<number>; filename: string } | false> => {
   if (!key || !region) {
     return false;
   }

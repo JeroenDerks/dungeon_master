@@ -19,9 +19,14 @@ export default async function handler(
     const filenames = fs.readdirSync(dir);
     console.log(filenames);
 
+    if (!viseme) {
+      res.status(500).json({ message: "internal issue with key or region" });
+      return;
+    }
+
     res
       .status(200)
-      .json({ blendData: viseme.blendData, filename: viseme.filename, dir });
+      .json({ blendData: viseme?.blendData, filename: viseme?.filename, dir });
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }
