@@ -28,15 +28,10 @@ export const getViseme = async ({
     const speechConfig = sdk.SpeechConfig.fromSubscription(key!, region!);
     speechConfig.speechSynthesisOutputFormat = 5; // mp3
 
-    const randomString = Math.random().toString(36).slice(2, 7);
-    const filename = `./public/audio/speech-${randomString}.mp3`;
-    const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filename);
-
     let timeStep = 1 / 60;
     let timeStamp = 0;
-    let rawData: string = "";
 
-    let synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
+    let synthesizer = new sdk.SpeechSynthesizer(speechConfig);
     let blendData: BlendData = [];
 
     synthesizer.synthesisCompleted = (s, e) => {
