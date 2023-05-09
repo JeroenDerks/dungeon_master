@@ -10,14 +10,19 @@ let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml
 const key = process.env.AZURE_KEY;
 const region = process.env.AZURE_REGION;
 
-export const getViseme = async ({ userInput }: { userInput: string }) => {
-  if (!key || !region) {
-    return false;
-  }
-
+export const getViseme = async ({
+  userInput,
+}: {
+  userInput: string;
+}): Promise<{ filename: string; blendData: number[][] }> => {
   return new Promise((resolve, reject) => {
+    if (!key || !region) {
+      reject();
+      return;
+    }
+
     let ssml = SSML.replace("__TEXT__", userInput);
-    const speechConfig = sdk.SpeechConfig.fromSubscription(key!, region!);
+    const speechConfig = sdk.SpeechConfig.fromSubscription(key, region);
     speechConfig.speechSynthesisOutputFormat = 5; // mp3
     speechConfig.speechSynthesisVoiceName = "en-US-DavisNeural";
 
