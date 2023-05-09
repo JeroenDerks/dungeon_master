@@ -38,7 +38,7 @@ export function initThree() {
     1,
     20
   );
-  camera.position.set(-1.8, 0.8, 3);
+  camera.position.set(-0.2, -3, 1);
 
   const scene = new THREE.Scene();
 
@@ -98,8 +98,8 @@ export function initThree() {
   controls.maxPolarAngle = Math.PI / 1.8;
   controls.target.set(0, 0.15, -0.2);
 
-  const stats = new Stats();
-  container.appendChild(stats.dom);
+  // const stats = new Stats();
+  // container.appendChild(stats.dom);
 
   renderer.setAnimationLoop(() => {
     const delta = clock.getDelta();
@@ -111,6 +111,6 @@ export function initThree() {
 
     controls.update();
 
-    stats.update();
+    // stats.update();
   });
 }
