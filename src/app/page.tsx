@@ -19,11 +19,11 @@ import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 import { Input } from "../../components/Input";
 
-let defaultAnimation;
 let mixer: any;
 
 export default function Home() {
   const ref = useRef(null);
+  const [animation, setAnimation] = React.useState<any>();
 
   useEffect(() => {
     const clock = new THREE.Clock();
@@ -70,7 +70,6 @@ export default function Home() {
         scene.add(mesh);
         console.log("mesh", mesh);
 
-        defaultAnimation = gltf.animations[0];
         mixer = new THREE.AnimationMixer(mesh);
         mixer.clipAction(zeroClip).play();
         // GUI
@@ -105,6 +104,9 @@ export default function Home() {
     controls.maxPolarAngle = Math.PI / 1.8;
     controls.target.set(0, 0.15, -0.2);
 
+    const stats = new Stats();
+    container.appendChild(stats.dom);
+
     renderer.setAnimationLoop(() => {
       const delta = clock.getDelta();
       if (mixer) {
@@ -114,13 +116,26 @@ export default function Home() {
       renderer.render(scene, camera);
 
       controls.update();
+
+      stats.update();
     });
-  }, []);
+  }, [animation]);
+
+  const updateAnimation = (_animation) => {
+    if (animation) {
+      let clipAction = mixer.clipAction(_animation);
+      clipAction.setLoop(THREE.LoopOnce);
+      clipAction.clampWhenFinished = true;
+      clipAction.enable = true;
+
+      clipAction.reset().play();
+    }
+  };
 
   return (
     <main>
       <div ref={ref}></div>
-      <Input mixer={mixer} />
+      <Input mixer={mixer} updateAnimation={updateAnimation} />
     </main>
   );
 }
