@@ -19,7 +19,9 @@ export default async function handler(
     const filenames = fs.readdirSync(dir);
     console.log(filenames);
 
-    res.status(200).json({ ...viseme, dir });
+    res
+      .status(200)
+      .json({ blendData: viseme.blendData, filename: viseme.filename, dir });
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }
