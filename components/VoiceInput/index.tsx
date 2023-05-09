@@ -23,11 +23,11 @@ export const VoiceInput = () => {
 
   const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
   speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
-  speechRecognizer.recognizing = (s, e) => {
+  speechRecognizer.recognizing = (s: any, e: any) => {
     console.log(`RECOGNIZING: Text=${e.result.text}`);
   };
 
-  speechRecognizer.recognized = (s, e) => {
+  speechRecognizer.recognized = (s: any, e: any) => {
     if (e.result.reason == sdk.ResultReason.RecognizedSpeech) {
       console.log(`RECOGNIZED: Text=${e.result.text}`);
       setText(e.result.text);
@@ -37,7 +37,7 @@ export const VoiceInput = () => {
     }
   };
 
-  speechRecognizer.canceled = (s, e) => {
+  speechRecognizer.canceled = (s: any, e: any) => {
     console.log(`CANCELED: Reason=${e.reason}`);
 
     if (e.reason == sdk.CancellationReason.Error) {
@@ -51,7 +51,7 @@ export const VoiceInput = () => {
     speechRecognizer.stopContinuousRecognitionAsync();
   };
 
-  speechRecognizer.sessionStopped = (s, e) => {
+  speechRecognizer.sessionStopped = (s: any, e: any) => {
     console.log("\n    Session stopped event.");
     speechRecognizer.stopContinuousRecognitionAsync();
   };
