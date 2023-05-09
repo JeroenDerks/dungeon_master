@@ -12,7 +12,10 @@ export const Input = () => {
       userInput: e.currentTarget.textArea.value,
     });
 
+    console.log(req);
+
     if (req.status === 200) {
+      console.log(req.data);
       const audio = new Audio("/" + req.data.filename);
       audio.load();
       audio.play();

@@ -11,16 +11,15 @@ export default async function handler(
   if (req.method === "POST") {
     const { userInput } = req.body;
 
+    console.log(userInput);
     const viseme = await getViseme({ userInput });
 
-    const dir = path.resolve("./public");
+    const dir = path.resolve("./public/audio");
     console.log(dir);
     const filenames = fs.readdirSync(dir);
     console.log(filenames);
 
-    const filename = path.join("/", viseme.filename);
-
-    res.status(200).json({ blendData: viseme.blendData, filename });
+    res.status(200).json({ ...viseme!, dir, filenames });
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }

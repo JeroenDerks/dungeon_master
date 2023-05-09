@@ -1,4 +1,5 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
+import { uploadToStorage } from "./uploadToStorage";
 
 let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-US">
 <voice name="en-US-DavisNeural" style='whispering'>
@@ -10,24 +11,18 @@ let SSML = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml
 const key = process.env.AZURE_KEY;
 const region = process.env.AZURE_REGION;
 
-export const getViseme = async ({
-  userInput,
-}: {
-  userInput: string;
-}): Promise<{ filename: string; blendData: number[][] }> => {
-  return new Promise((resolve, reject) => {
-    if (!key || !region) {
-      reject();
-      return;
-    }
+export const getViseme = async ({ userInput }: { userInput: string }) => {
+  if (!key || !region) {
+    return false;
+  }
 
+  return new Promise((resolve, reject) => {
     let ssml = SSML.replace("__TEXT__", userInput);
-    const speechConfig = sdk.SpeechConfig.fromSubscription(key, region);
+    const speechConfig = sdk.SpeechConfig.fromSubscription(key!, region!);
     speechConfig.speechSynthesisOutputFormat = 5; // mp3
-    speechConfig.speechSynthesisVoiceName = "en-US-DavisNeural";
 
     const randomString = Math.random().toString(36).slice(2, 7);
-    const filename = `./public/speech-${randomString}.mp3`;
+    const filename = `./public/audio/speech-${randomString}.mp3`;
     const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filename);
 
     let timeStep = 1 / 60;
@@ -46,7 +41,7 @@ export const getViseme = async ({
         }
       );
 
-      resolve({ blendData, filename: `speech-${randomString}.mp3` });
+      resolve({ blendData, filename: `audio/speech-${randomString}.mp3` });
     };
     synthesizer.speakSsmlAsync(ssml);
   });
