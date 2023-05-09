@@ -5,9 +5,8 @@ import { Container, Button, Form } from "./styled";
 import { blendShapeToAnimation } from "../../utils/blendShapeToAnimation";
 import type { FormProps } from "./types";
 import { BlendData } from "../../utils/types";
-import { mixer } from "@/app/page";
 
-export const Input = () => {
+export const Input = ({ mixer }: { mixer: any }) => {
   const handleSubmit = async (e: React.FormEvent<FormProps>) => {
     e.preventDefault();
 
